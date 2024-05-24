@@ -1,4 +1,3 @@
-// src/app/components/Temperature/Temperature.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/app/context/globalContext";
@@ -19,18 +18,39 @@ const Temperature: React.FC = () => {
   const name = forecast?.name;
   const weather = forecast?.weather;
 
-  const [temp, setTemp] = useState<number | null>(null);
+  const [tempC, setTempC] = useState<number | null>(null);
+  const [tempK, setTempK] = useState<number | null>(null);
+  const [tempF, setTempF] = useState<number | null>(null);
+  const [tempR, setTempR] = useState<number | null>(null);
   const [localTime, setLocalTime] = useState<string>("");
   const [currentDay, setCurrentDay] = useState<string>("");
 
   useEffect(() => {
     // Reference to the temperature data in Firebase
-    const tempRef = ref(database, 'temperature_c');
+    const tempCRef = ref(database, 'temperature_c');
+    const tempKRef = ref(database, 'temperature_k');
+    const tempFRef = ref(database, 'temperature_f');
+    const tempRRef = ref(database, 'temperature_r');
 
-    // Fetch the current temperature in Celsius from Firebase
-    onValue(tempRef, (snapshot) => {
+    // Fetch the temperatures from Firebase
+    onValue(tempCRef, (snapshot) => {
       const data = snapshot.val();
-      setTemp(data);
+      setTempC(data);
+    });
+
+    onValue(tempKRef, (snapshot) => {
+      const data = snapshot.val();
+      setTempK(data);
+    });
+
+    onValue(tempFRef, (snapshot) => {
+      const data = snapshot.val();
+      setTempF(data);
+    });
+
+    onValue(tempRRef, (snapshot) => {
+      const data = snapshot.val();
+      setTempR(data);
     });
   }, []);
 
@@ -54,7 +74,7 @@ const Temperature: React.FC = () => {
     }
   }, [timezone]);
 
-  if (!forecast || !weather || temp === null) {
+  if (!forecast || !weather || tempC === null || tempK === null || tempF === null || tempR === null) {
     return <div>Loading...</div>;
   }
 
@@ -90,11 +110,14 @@ const Temperature: React.FC = () => {
           <span>{name}</span>
           <span>{navigation}</span>
         </p>
-        <p className="py-10 text-9xl font-bold self-center">{temp}°</p>
+        <p className="py-6 text-7xl font-bold self-center">{tempC.toFixed(1)}°C</p>
+        <p className="text-center">
+          <small className="text-sm">{tempK.toFixed(2)}K</small> | <small className="text-sm">{tempF.toFixed(2)}°F</small> | <small className="text-sm">{tempR.toFixed(2)}°R</small>
+        </p>
 
-        <div>
-          <div>
-            <span>{getIcon()}</span>
+        <div className="flex items-center justify-center">
+          <div className="flex flex-col items-center">
+            <span className="text-4xl">{getIcon()}</span>
             <p className="pt-2 capitalize text-lg font-medium">{description}</p>
           </div>
         </div>
