@@ -1,17 +1,23 @@
+// src/app/components/Humidity/Humidity.tsx
 "use client";
-import { useGlobalContext } from "@/app/context/globalContext";
+import React, { useEffect, useState } from "react";
 import { droplets } from "@/app/utils/Icons";
 import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
+import { database, ref, onValue } from "@/app/utils/firebase"; // Adjusted import path
 
-function Humidity() {
-  const { forecast } = useGlobalContext();
+const Humidity: React.FC = () => {
+  const [humidity, setHumidity] = useState<number | null>(null);
 
-  if (!forecast || !forecast?.main || !forecast?.main?.humidity) {
-    return <Skeleton className="h-[12rem] w-full" />;
-  }
+  useEffect(() => {
+    // Reference to the humidity data in Firebase
+    const humidityRef = ref(database, 'humidity');
 
-  const { humidity } = forecast?.main;
+    // Fetch the humidity from Firebase
+    onValue(humidityRef, (snapshot) => {
+      const data = snapshot.val();
+      setHumidity(data);
+    });
+  }, []);
 
   const getHumidityText = (humidity: number) => {
     if (humidity < 30) return "Dry: May cause skin irritation";
@@ -23,17 +29,21 @@ function Humidity() {
     return "Unavailable: Humidity data not available";
   };
 
-  return (
-    <div className="pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 dark:bg-dark-grey shadow-sm dark:shadow-none">
-      <div className="top">
-        <h2 className="flex items-center gap-2 font-medium">
-          {droplets} Humidity
-        </h2>
-        <p className="pt-4 text-2xl">{humidity}%</p>
-      </div>
+  if (humidity === null) {
+    return <Skeleton className="h-[12rem] w-full" />;
+  }
 
-      <p className="text-sm">{getHumidityText(humidity)}.</p>
-    </div>
+  return (
+      <div className="pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 dark:bg-dark-grey shadow-sm dark:shadow-none">
+        <div className="top">
+          <h2 className="flex items-center gap-2 font-medium">
+            {droplets} Humidity
+          </h2>
+          <p className="pt-4 text-2xl">{humidity}%</p>
+        </div>
+
+        <p className="text-sm">{getHumidityText(humidity)}.</p>
+      </div>
   );
 }
 

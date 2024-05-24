@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import AirPollution from "./Components/AirPollution/AirPollution";
 import DailyForecast from "./Components/DailyForecast/DailyForecast";
 import FeelsLike from "./Components/FeelsLike/FeelsLike";
@@ -14,6 +13,8 @@ import UvIndex from "./Components/UvIndex/UvIndex";
 import Visibility from "./Components/Visibility/Visibility";
 import Wind from "./Components/Wind/Wind";
 import FiveDayForecast from "./Components/FiveDayForecast/FiveDayForecast";
+import Vibration from "./Components/Vibration/Vibration";
+import CarbonMonoxide from "./Components/CarbonMonoxide/CarbonMonoxide";
 import { useGlobalContextUpdate } from "./context/globalContext";
 
 export default function Home() {
@@ -37,17 +38,19 @@ export default function Home() {
             <FiveDayForecast />
           </div>
           <div className="flex flex-col w-full">
-            <div className="instruments grid h-full gap-4 col-span-full sm-2:col-span-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="instruments grid h-full gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               <AirPollution />
               <Sunset />
               <Wind />
-              <DailyForecast />
               <UvIndex />
               <Population />
               <FeelsLike />
               <Humidity />
               <Visibility />
               <Pressure />
+              <Vibration />
+              <CarbonMonoxide />
+              <DailyForecast className="col-span-2" />
             </div>
             <div className="mapbox-con mt-4 flex gap-4">
               <Mapbox />
