@@ -14,8 +14,10 @@ import Visibility from "./Components/Visibility/Visibility";
 import Wind from "./Components/Wind/Wind";
 import FiveDayForecast from "./Components/FiveDayForecast/FiveDayForecast";
 import EarthquakeAlert from "./Components/Vibration/Vibration";
-import CarbonMonoxide from "./Components/CarbonMonoxide/CarbonMonoxide"; // Import CarbonMonoxide component
+import CarbonMonoxide from "./Components/CarbonMonoxide/CarbonMonoxide";
+import Light from "./Components/Light/Light";
 import { useGlobalContextUpdate } from "./context/globalContext";
+import FiveDayPrediction from "./Components/FiveDayPrediction/FiveDayPrediction";
 
 export default function Home() {
   const { setActiveCityCoords } = useGlobalContextUpdate();
@@ -50,6 +52,8 @@ export default function Home() {
               <Pressure />
               <EarthquakeAlert />
               <CarbonMonoxide />
+              <Light />
+              <FiveDayPrediction />
             </div>
             <div className="flex flex-col mt-4 gap-4">
               <div className="flex w-full gap-4">
