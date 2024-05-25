@@ -13,8 +13,8 @@ import UvIndex from "./Components/UvIndex/UvIndex";
 import Visibility from "./Components/Visibility/Visibility";
 import Wind from "./Components/Wind/Wind";
 import FiveDayForecast from "./Components/FiveDayForecast/FiveDayForecast";
-import Vibration from "./Components/Vibration/Vibration";
-import CarbonMonoxide from "./Components/CarbonMonoxide/CarbonMonoxide";
+import EarthquakeAlert from "./Components/Vibration/Vibration";
+import CarbonMonoxide from "./Components/CarbonMonoxide/CarbonMonoxide"; // Import CarbonMonoxide component
 import { useGlobalContextUpdate } from "./context/globalContext";
 
 export default function Home() {
@@ -48,12 +48,20 @@ export default function Home() {
               <Humidity />
               <Visibility />
               <Pressure />
-              <Vibration />
+              <EarthquakeAlert />
               <CarbonMonoxide />
-              <DailyForecast className="col-span-2" />
             </div>
-            <div className="mapbox-con mt-4 flex gap-4">
-              <Mapbox />
+            <div className="flex flex-col mt-4 gap-4">
+              <div className="flex w-full gap-4">
+                <div className="flex-1">
+                  <DailyForecast />
+                </div>
+              </div>
+              <div className="flex w-full gap-4">
+                <div className="flex-1">
+                  <Mapbox />
+                </div>
+              </div>
             </div>
           </div>
         </div>
