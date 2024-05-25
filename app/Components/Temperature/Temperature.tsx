@@ -24,6 +24,7 @@ const Temperature: React.FC = () => {
   const [tempR, setTempR] = useState<number | null>(null);
   const [localTime, setLocalTime] = useState<string>("");
   const [currentDay, setCurrentDay] = useState<string>("");
+  const [currentDate, setCurrentDate] = useState<string>("");
 
   useEffect(() => {
     // Reference to the temperature data in Firebase
@@ -31,6 +32,7 @@ const Temperature: React.FC = () => {
     const tempKRef = ref(database, 'temperature_k');
     const tempFRef = ref(database, 'temperature_f');
     const tempRRef = ref(database, 'temperature_r');
+    const dateRef = ref(database, 'date'); // Reference to the date data in Firebase
 
     // Fetch the temperatures from Firebase
     onValue(tempCRef, (snapshot) => {
@@ -51,6 +53,12 @@ const Temperature: React.FC = () => {
     onValue(tempRRef, (snapshot) => {
       const data = snapshot.val();
       setTempR(data);
+    });
+
+    // Fetch the current date from Firebase
+    onValue(dateRef, (snapshot) => {
+      const data = snapshot.val();
+      setCurrentDate(data);
     });
   }, []);
 
@@ -100,11 +108,14 @@ const Temperature: React.FC = () => {
   return (
       <div
           className="pt-6 pb-5 px-4 border rounded-lg flex flex-col
-        justify-between dark:bg-dark-grey shadow-sm dark:shadow-none"
+      justify-between dark:bg-dark-grey shadow-sm dark:shadow-none"
       >
         <p className="flex justify-between items-center">
           <span className="font-medium">{currentDay}</span>
-          <span className="font-medium">{localTime}</span>
+          <div className="text-right">
+            <span className="font-medium block">{localTime}</span>
+            <span className="text-sm block">{currentDate}</span>
+          </div>
         </p>
         <p className="pt-2 font-bold flex gap-1">
           <span>{name}</span>
