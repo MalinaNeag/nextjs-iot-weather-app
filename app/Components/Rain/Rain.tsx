@@ -32,7 +32,7 @@ const Rain: React.FC<RainProps> = ({ className }) => {
     }
 
     return (
-        <div className={`pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 shadow-sm transition-all duration-500 ease-in-out ${rainDetected ? "bg-blue-500 text-white" : "dark:bg-dark-grey text-white"} ${className}`}>
+        <div className={`pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 shadow-sm transition-all duration-500 ease-in-out ${rainDetected ? "bg-blue-500 text-white" : "bg-light-grey dark:bg-dark-grey text-black dark:text-white"} ${className}`}>
             <div className="top">
                 <h2 className="flex items-center gap-2 font-medium">
                     <MdOutlineWaterDrop /> Rain Detection
@@ -45,4 +45,3 @@ const Rain: React.FC<RainProps> = ({ className }) => {
 }
 
 export default Rain;
-
