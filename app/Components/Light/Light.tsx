@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { MdLightMode } from 'react-icons/md';
+import { MdLightMode } from 'react-icons/md'; // Import the light mode icon
 import { Skeleton } from "@/components/ui/skeleton";
-import { database, ref, onValue } from "@/app/utils/firebase";
+import { database, ref, onValue } from "@/app/utils/firebase"; // Firebase utility imports
 
 interface LightDetectionProps {
     className?: string;
@@ -21,14 +21,11 @@ const LightDetection: React.FC<LightDetectionProps> = ({ className }) => {
             setLight(data);
         });
 
+        // Fetch and determine daytime based on Firebase provided time
         onValue(timeRef, (snapshot) => {
-            const utcTime = snapshot.val(); // Assuming this is in UTC
-            const localTime = new Date(utcTime);
-            // Adjust to local timezone, for example, if your timezone is UTC+1
-            localTime.setHours(localTime.getUTCHours() + 1); // Adjust the +1 to match your local timezone offset
-
-            const hours = localTime.getHours();
-            console.log("Corrected Local Hour:", hours); // Ensure this logs 17 for 5:14 PM local time
+            const timeString = snapshot.val();
+            const currentTime = new Date(`2024-01-01T${timeString}:00Z`); // Constructing a valid date-time string
+            const hours = currentTime.getHours();
             setIsDaytime(hours >= 6 && hours < 20);
         });
     }, []);
@@ -46,7 +43,7 @@ const LightDetection: React.FC<LightDetectionProps> = ({ className }) => {
     }
 
     return (
-        <div className={`pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 dark:bg-dark-grey shadow-sm dark:shadow-none ${className}`}>
+        <div className={`pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 shadow-sm dark:shadow-none ${className} ${light > 0 ? (isDaytime ? "bg-yellow-500" : "bg-orange-500") : "dark:bg-dark-grey"} text-white`}>
             <div className="top">
                 <h2 className="flex items-center gap-2 font-medium">
                     <MdLightMode /> Light Detection
@@ -58,4 +55,3 @@ const LightDetection: React.FC<LightDetectionProps> = ({ className }) => {
 }
 
 export default LightDetection;
-
