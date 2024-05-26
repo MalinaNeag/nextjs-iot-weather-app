@@ -23,8 +23,8 @@ const EarthquakeAlert: React.FC<EarthquakeAlertProps> = ({ className }) => {
     }, []);
 
     const getVibrationText = (vibration: number) => {
-        if (vibration === 1) return "No vibration detected";
-        if (vibration === 0) return "Danger: Possible earthquake detected! Take immediate action!";
+        if (vibration === 0) return "No vibration detected";
+        if (vibration === 1) return "Danger: Possible earthquake detected! Take immediate action!";
         return "Unavailable: Vibration data not available";
     };
 
@@ -33,14 +33,14 @@ const EarthquakeAlert: React.FC<EarthquakeAlertProps> = ({ className }) => {
     }
 
     return (
-        <div className={`pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 dark:bg-dark-grey shadow-sm dark:shadow-none ${className}`}>
+        <div className={`pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 shadow-sm transition-all duration-500 ease-in-out ${vibration === 1 ? "bg-red-500 text-white" : "bg-green-500 text-white"} ${className}`}>
             <div className="top">
                 <h2 className="flex items-center gap-2 font-medium">
                     <MdVibration /> Earthquake Alert
                 </h2>
             </div>
 
-            <p className={`text-sm ${vibration === 0 ? "text-red-500" : ""}`}>{getVibrationText(vibration)}.</p>
+            <p className="text-sm">{getVibrationText(vibration)}.</p>
         </div>
     );
 }
