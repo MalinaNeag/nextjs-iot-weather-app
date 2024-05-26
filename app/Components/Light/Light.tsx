@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { MdLightMode } from 'react-icons/md'; // Import the light icon
+import { MdLightMode } from 'react-icons/md';
 import { Skeleton } from "@/components/ui/skeleton";
-import { database, ref, onValue } from "@/app/utils/firebase"; // Adjusted import path
+import { database, ref, onValue } from "@/app/utils/firebase";
 
 interface LightDetectionProps {
     className?: string;
@@ -13,26 +13,28 @@ const LightDetection: React.FC<LightDetectionProps> = ({ className }) => {
     const [isDaytime, setIsDaytime] = useState<boolean | null>(null);
 
     useEffect(() => {
-        // Reference to the light data in Firebase
         const lightRef = ref(database, 'light_detected');
         const timeRef = ref(database, 'current_time');
 
-        // Fetch the light data from Firebase
         onValue(lightRef, (snapshot) => {
             const data = snapshot.val();
             setLight(data);
         });
 
-        // Fetch the current time from Firebase
         onValue(timeRef, (snapshot) => {
-            const currentTime = snapshot.val();
-            const hours = new Date(currentTime).getHours();
-            setIsDaytime(hours >= 6 && hours < 18); // Assuming daytime is between 6 AM and 6 PM
+            const utcTime = snapshot.val(); // Assuming this is in UTC
+            const localTime = new Date(utcTime);
+            // Adjust to local timezone, for example, if your timezone is UTC+1
+            localTime.setHours(localTime.getUTCHours() + 1); // Adjust the +1 to match your local timezone offset
+
+            const hours = localTime.getHours();
+            console.log("Corrected Local Hour:", hours); // Ensure this logs 17 for 5:14 PM local time
+            setIsDaytime(hours >= 6 && hours < 20);
         });
     }, []);
 
     const getLightText = (light: number, isDaytime: boolean) => {
-        if (light === 0) {
+        if (light > 0) {
             return isDaytime ? "Light detected" : "Artificial light detected";
         } else {
             return "No light detected";
@@ -40,7 +42,7 @@ const LightDetection: React.FC<LightDetectionProps> = ({ className }) => {
     };
 
     if (light === null || isDaytime === null) {
-        return <Skeleton className="h-[12rem] w-full" />;
+        return <Skeleton className={`h-[12rem] w-full ${className}`} />;
     }
 
     return (
@@ -50,10 +52,10 @@ const LightDetection: React.FC<LightDetectionProps> = ({ className }) => {
                     <MdLightMode /> Light Detection
                 </h2>
             </div>
-
             <p className="text-sm">{getLightText(light, isDaytime)}.</p>
         </div>
     );
 }
 
 export default LightDetection;
+
