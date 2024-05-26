@@ -18,6 +18,7 @@ import CarbonMonoxide from "./Components/CarbonMonoxide/CarbonMonoxide";
 import Light from "./Components/Light/Light";
 import { useGlobalContextUpdate } from "./context/globalContext";
 import FiveDayPrediction from "./Components/FiveDayPrediction/FiveDayPrediction";
+import Rain from "@/app/Components/Rain/Rain";
 
 export default function Home() {
   const { setActiveCityCoords } = useGlobalContextUpdate();
@@ -45,14 +46,15 @@ export default function Home() {
               <Sunset />
               <Wind />
               <UvIndex />
-              <Population />
               <FeelsLike />
-              <Humidity />
-              <Visibility />
               <Pressure />
+              <Humidity />
               <EarthquakeAlert />
               <CarbonMonoxide />
               <Light />
+              <Rain />
+              <Visibility />
+              <Population />
               <FiveDayPrediction />
             </div>
             <div className="flex flex-col mt-4 gap-4">
