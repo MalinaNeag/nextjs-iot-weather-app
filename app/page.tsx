@@ -17,7 +17,6 @@ import EarthquakeAlert from "./Components/Vibration/Vibration";
 import CarbonMonoxide from "./Components/CarbonMonoxide/CarbonMonoxide";
 import Light from "./Components/Light/Light";
 import { useGlobalContextUpdate } from "./context/globalContext";
-import FiveDayPrediction from "./Components/FiveDayPrediction/FiveDayPrediction";
 import Rain from "@/app/Components/Rain/Rain";
 
 export default function Home() {
@@ -55,7 +54,6 @@ export default function Home() {
               <Rain />
               <Visibility />
               <Population />
-              <FiveDayPrediction />
             </div>
             <div className="flex flex-col mt-4 gap-4">
               <div className="flex w-full gap-4">
