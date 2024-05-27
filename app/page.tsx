@@ -1,9 +1,10 @@
 "use client";
+import dynamic from "next/dynamic";
+import React, { useEffect } from "react";
 import AirPollution from "./Components/AirPollution/AirPollution";
 import DailyForecast from "./Components/DailyForecast/DailyForecast";
 import FeelsLike from "./Components/FeelsLike/FeelsLike";
 import Humidity from "./Components/Humidity/Humidity";
-import Mapbox from "./Components/Mapbox/Mapbox";
 import Navbar from "./Components/Navbar";
 import Population from "./Components/Population/Population";
 import Pressure from "./Components/Pressure/Pressure";
@@ -19,16 +20,21 @@ import Light from "./Components/Light/Light";
 import { useGlobalContextUpdate } from "./context/globalContext";
 import Rain from "@/app/Components/Rain/Rain";
 
+// Dynamically import Mapbox to disable SSR
+const Mapbox = dynamic(() => import("./Components/Mapbox/Mapbox"), { ssr: false });
+
 export default function Home() {
   const { setActiveCityCoords } = useGlobalContextUpdate();
 
   const getClickedCityCords = (lat: number, lon: number) => {
     setActiveCityCoords([lat, lon]);
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (typeof window !== "undefined") {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   return (

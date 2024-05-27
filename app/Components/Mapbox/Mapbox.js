@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Ensure this directive is present
 
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
