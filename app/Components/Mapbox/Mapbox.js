@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Ensure this component is always executed on the client side
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
