@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Ensure this component is always executed on the client side
 import React, { useEffect } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -8,7 +8,7 @@ function FlyToActiveCity({ activeCityCords }) {
     const map = useMap();
 
     useEffect(() => {
-        if (activeCityCords && typeof window !== 'undefined') { // Check if window is defined
+        if (typeof window !== 'undefined' && activeCityCords) { // Ensuring window is defined and coordinates are available
             const zoomLev = 13;
             const flyToOptions = {
                 duration: 1.5,
@@ -26,14 +26,14 @@ function FlyToActiveCity({ activeCityCords }) {
 }
 
 function Mapbox() {
-    const { forecast } = useGlobalContext(); // Your coordinates
-
+    const { forecast } = useGlobalContext();
     const activeCityCords = forecast?.coord;
 
-    if (!forecast || !forecast.coord || !activeCityCords) {
+    if (typeof window === 'undefined' || !forecast || !forecast.coord || !activeCityCords) {
+        // Safeguard for SSR and loading state
         return (
             <div>
-                <h1>Loading</h1>
+                <h1>Loading...</h1>
             </div>
         );
     }
