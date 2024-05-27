@@ -23,8 +23,8 @@ const CarbonMonoxide: React.FC<CarbonMonoxideProps> = ({ className }) => {
   }, []);
 
   const getCODetectionText = (coDetected: boolean) => {
-    if (coDetected === true) return "Danger: High levels of carbon monoxide detected! Evacuate immediately!";
-    if (coDetected === false) return "No carbon monoxide detected";
+    if (coDetected) return "Danger: High levels of carbon monoxide detected! Evacuate immediately!";
+    if (!coDetected) return "No carbon monoxide detected";
     return "Unavailable: Carbon monoxide detection data not available";
   };
 
