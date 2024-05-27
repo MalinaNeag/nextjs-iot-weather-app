@@ -1,11 +1,14 @@
+// pages/api/pollution.ts
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
-    const url = new URL(req.url);
-    const lat = url.searchParams.get('lat');
-    const lon = url.searchParams.get('lon');
+    const { searchParams } = req.nextUrl;
+    const lat = searchParams.get('lat');
+    const lon = searchParams.get('lon');
 
     if (!lat || !lon) {
       return new Response('Latitude and longitude are required', { status: 400 });
