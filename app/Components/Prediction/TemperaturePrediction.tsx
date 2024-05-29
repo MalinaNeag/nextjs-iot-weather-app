@@ -4,15 +4,18 @@ import React, { useEffect, useState } from "react";
 import * as tf from '@tensorflow/tfjs';
 import { database, ref, onValue } from "@/app/utils/firebase";
 import { Skeleton } from "@/components/ui/skeleton";
+import moment from "moment";
+import { thermometer } from "@/app/utils/Icons";
 
 const TemperaturePrediction: React.FC = () => {
-  const [predictedTemperature, setPredictedTemperature] = useState<number | null>(null);
+  const [predictedTemperatures, setPredictedTemperatures] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [dates, setDates] = useState<string[]>([]);
 
   // Load the model and scaler
   const loadModelAndScaler = async () => {
     const model = await tf.loadLayersModel('/models/weather_prediction_model_no_reg/model.json');
     const scalerData = await fetch('/models/scaler.json').then(res => res.json());
-    console.log('Model and scaler loaded:', { model, scalerData });
     return { model, scalerData };
   };
 
@@ -22,7 +25,6 @@ const TemperaturePrediction: React.FC = () => {
       const currentDataRef = ref(database, '/');
       onValue(currentDataRef, (snapshot) => {
         const data = snapshot.val();
-        console.log('Current weather data from Firebase:', data);
         resolve(data);
       }, reject);
     });
@@ -46,21 +48,18 @@ const TemperaturePrediction: React.FC = () => {
   };
 
   // Make a prediction using the model
-  const makePrediction = async () => {
+  const makePredictions = async (days: number) => {
     try {
       const { model, scalerData } = await loadModelAndScaler();
       const currentData: any = await getCurrentWeatherData();
       const historicalData = await getHistoricalWeatherData();
 
       // Prepare the input sequence
-      const inputSequence = historicalData.map((data) => [
+      let inputSequence = historicalData.map((data) => [
         (data.temp - scalerData.data_min[0]) / (scalerData.data_max[0] - scalerData.data_min[0]),
         (data.pressure - scalerData.data_min[1]) / (scalerData.data_max[1] - scalerData.data_min[1]),
         (data.humidity - scalerData.data_min[2]) / (scalerData.data_max[2] - scalerData.data_min[2]),
       ]);
-
-      // Log the historical data (scaled)
-      console.log('Historical data (scaled):', inputSequence);
 
       // Add the current data to the input sequence
       const currentScaled = [
@@ -70,46 +69,63 @@ const TemperaturePrediction: React.FC = () => {
       ];
       inputSequence.push(currentScaled);
 
-      // Log the current data (scaled)
-      console.log('Current data (scaled):', currentScaled);
+      let predictions = [];
+      for (let i = 0; i < days; i++) {
+        const inputTensor = tf.tensor2d(inputSequence, [inputSequence.length, 3]).reshape([1, 10, 3]);
+        const prediction = model.predict(inputTensor) as tf.Tensor;
+        const predictedTemperature = prediction.dataSync()[0] * (scalerData.data_max[0] - scalerData.data_min[0]) + scalerData.data_min[0];
 
-      // Convert input sequence to tensor
-      const inputTensor = tf.tensor2d(inputSequence, [inputSequence.length, 3]).reshape([1, 10, 3]);
+        predictions.push(predictedTemperature);
 
-      // Log the input tensor
-      console.log('Input tensor:', inputTensor.toString());
+        inputSequence = inputSequence.slice(1);
+        inputSequence.push([
+          (predictedTemperature - scalerData.data_min[0]) / (scalerData.data_max[0] - scalerData.data_min[0]),
+          (currentData.pressure - scalerData.data_min[1]) / (scalerData.data_max[1] - scalerData.data_min[1]),
+          (currentData.humidity - scalerData.data_min[2]) / (scalerData.data_max[2] - scalerData.data_min[2]),
+        ]);
+      }
 
-      const prediction = model.predict(inputTensor) as tf.Tensor;
-
-      // Log the raw prediction from the model
-      console.log('Raw prediction:', prediction.dataSync());
-
-      const predictedTemperature = prediction.dataSync()[0] * (scalerData.data_max[0] - scalerData.data_min[0]) + scalerData.data_min[0];
-
-      // Log the predicted temperature
-      console.log('Predicted temperature:', predictedTemperature);
-
-      setPredictedTemperature(predictedTemperature);
+      setPredictedTemperatures(predictions);
+      setLoading(false);
     } catch (error) {
       console.error('Failed to fetch forecast:', error);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    makePrediction();
+    makePredictions(5);
+    const newDates = [];
+    for (let i = 0; i < 5; i++) {
+      newDates.push(moment().add(i, 'days').format('dddd, DD MMM'));
+    }
+    setDates(newDates);
   }, []);
 
-  if (predictedTemperature === null) {
+  if (loading) {
     return <Skeleton className="h-[12rem] w-full" />;
   }
 
   return (
-      <div className="pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 dark:bg-dark-grey shadow-sm dark:shadow-none">
-        <div className="top">
+      <div
+          className="pt-6 pb-5 px-4 flex-1 border rounded-lg flex flex-col
+        justify-between dark:bg-dark-grey shadow-sm dark:shadow-none"
+      >
+        <div>
           <h2 className="flex items-center gap-2 font-medium">
-            Predicted Temperature
+            {thermometer} Our AI Prediction
           </h2>
-          <p className="pt-4 text-2xl">{predictedTemperature.toFixed(2)}°C</p>
+          <div className="forecast-list pt-3">
+            {predictedTemperatures.map((temp, index) => (
+                <div
+                    key={index}
+                    className="py-4 flex justify-between items-center border-b-2"
+                >
+                  <p className="text-xl font-bold">{temp.toFixed(2)}°C</p>
+                  <p className="text-gray-500 text-sm">{dates[index]}</p>
+                </div>
+            ))}
+          </div>
         </div>
       </div>
   );
