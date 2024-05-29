@@ -1,17 +1,16 @@
 "use client";
+
 import dynamic from "next/dynamic";
-import React, { useEffect } from "react";
+import React from "react";
 import AirPollution from "./Components/AirPollution/AirPollution";
 import DailyForecast from "./Components/DailyForecast/DailyForecast";
 import FeelsLike from "./Components/FeelsLike/FeelsLike";
 import Humidity from "./Components/Humidity/Humidity";
 import Navbar from "./Components/Navbar";
-import Population from "./Components/Population/Population";
 import Pressure from "./Components/Pressure/Pressure";
 import Sunset from "./Components/Sunset/Sunset";
 import Temperature from "./Components/Temperature/Temperature";
 import UvIndex from "./Components/UvIndex/UvIndex";
-import Visibility from "./Components/Visibility/Visibility";
 import Wind from "./Components/Wind/Wind";
 import FiveDayForecast from "./Components/FiveDayForecast/FiveDayForecast";
 import EarthquakeAlert from "./Components/Vibration/Vibration";
@@ -45,9 +44,10 @@ export default function Home() {
           <div className="flex flex-col gap-4 w-full min-w-[18rem] md:w-[35rem]">
             <Temperature />
             <FiveDayForecast />
+            <TemperaturePrediction />
           </div>
-          <div className="flex flex-col w-full">
-            <div className="instruments grid h-full gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="flex flex-col w-full gap-4">
+            <div className="instruments grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               <AirPollution />
               <Sunset />
               <Wind />
@@ -59,21 +59,10 @@ export default function Home() {
               <CarbonMonoxide />
               <Light />
               <Rain />
-              <Visibility />
-              <Population />
-              <TemperaturePrediction />
             </div>
-            <div className="flex flex-col mt-4 gap-4">
-              <div className="flex w-full gap-4">
-                <div className="flex-1">
-                  <DailyForecast />
-                </div>
-              </div>
-              <div className="flex w-full gap-4">
-                <div className="flex-1">
-                  <Mapbox />
-                </div>
-              </div>
+            <DailyForecast />
+            <div className="map-container h-[30rem] md:h-[38rem] lg:h-[46rem] flex-1">
+              <Mapbox />
             </div>
           </div>
         </div>
