@@ -19,6 +19,7 @@ import CarbonMonoxide from "./Components/CarbonMonoxide/CarbonMonoxide";
 import Light from "./Components/Light/Light";
 import { useGlobalContextUpdate } from "./context/globalContext";
 import Rain from "@/app/Components/Rain/Rain";
+import TemperaturePrediction from "@/app/Components/Prediction/TemperaturePrediction";
 
 // Dynamically import Mapbox to disable SSR
 const Mapbox = dynamic(() => import("./Components/Mapbox/Mapbox"), { ssr: false });
@@ -60,6 +61,7 @@ export default function Home() {
               <Rain />
               <Visibility />
               <Population />
+              <TemperaturePrediction />
             </div>
             <div className="flex flex-col mt-4 gap-4">
               <div className="flex w-full gap-4">
